@@ -5040,6 +5040,159 @@ db.todos.deleteMany({ completed: true })
 
 ### Simple Queries
 
+**Sample data**
+
+Todos
+
+```js
+[
+{
+  "task": "Complete project proposal",
+  "completed": false,
+  "priority": "High",
+  "tags": ["work", "project"],
+  "dueDate": "2023-09-15",
+  "category": "Business"
+},
+{
+  "task": "Buy groceries",
+  "completed": true,
+  "priority": "Medium",
+  "tags": ["personal", "shopping"],
+  "dueDate": "2023-09-10",
+  "category": "Personal"
+},
+{
+  "task": "Prepare for the presentation",
+  "completed": false,
+  "priority": "High",
+  "tags": ["work", "presentation"],
+  "dueDate": "2023-09-20",
+  "category": "Business"
+},
+{
+  "task": "Exercise for 30 minutes",
+  "completed": true,
+  "priority": "Low",
+  "tags": ["health", "exercise"],
+  "dueDate": "2023-09-12",
+  "category": "Personal"
+},
+{
+  "task": "Read a book",
+  "completed": false,
+  "priority": "Low",
+  "tags": ["personal", "reading"],
+  "dueDate": "2023-09-30",
+  "category": "Personal"
+}
+]
+```
+products
+
+```json
+[
+  {
+  "name": "Laptop",
+  "category": "Electronics",
+  "price": 999.99,
+  "in_stock": true
+},
+{
+  "name": "Smartphone",
+  "category": "Electronics",
+  "price": 599.99,
+  "in_stock": true,
+  "brand": "Samsung",
+  "model": "Galaxy S21",
+  "color": "Phantom Black"
+},
+{
+  "name": "The Great Gatsby",
+  "category": "Books",
+  "price": 14.99,
+  "in_stock": true,
+  "author": "F. Scott Fitzgerald",
+  "genre": "Classic Fiction"
+},
+{
+  "name": "Men's Jeans",
+  "category": "Clothing",
+  "price": 49.99,
+  "in_stock": false,
+  "brand": "Levi's",
+  "size": "32W x 34L",
+  "color": "Dark Blue"
+},
+{
+  "name": "Coffee Maker",
+  "category": "Appliances",
+  "price": 79.99,
+  "in_stock": true,
+  "brand": "Keurig",
+  "type": "Single Serve"
+}
+]
+```
+
+User
+
+```json
+[
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "age": 30,
+  "password": "hashedpassword123",
+  "address": {
+    "city": "New York",
+    "pincode": 10001
+  }
+},
+{
+  "name": "Alice Smith",
+  "email": "alice.smith@example.com",
+  "age": 28,
+  "password": "hashedpassword456",
+  "address": {
+    "city": "Los Angeles",
+    "pincode": 90001
+  }
+},
+{
+  "name": "Carlos Rodriguez",
+  "email": "carlos.rodriguez@example.com",
+  "age": 35,
+  "password": "hashedpassword789",
+  "address": {
+    "city": "Madrid",
+    "pincode": 28001
+  }
+},
+{
+  "name": "Emily Johnson",
+  "email": "emily.johnson@example.com",
+  "age": 25,
+  "password": "hashedpasswordabc",
+  "address": {
+    "city": "Chicago",
+    "pincode": 60601
+  }
+},
+{
+  "name": "Michael Brown",
+  "email": "michael.brown@example.com",
+  "age": 42,
+  "password": "hashedpasswordxyz",
+  "address": {
+    "city": "San Francisco",
+    "pincode": 94101
+  }
+}
+]
+```
+
+
 **Field Equality Tests:**
 
 Field equality tests in MongoDB involve querying documents to find those that have a specific field equal to a specified value. These tests are commonly used to filter and retrieve documents that match a particular criterion based on one or more fields.
@@ -5434,6 +5587,44 @@ if (result.deletedCount === 1) {
 ```
 
 ### More Complex Types of Queries
+
+Sample data
+
+Articles:
+
+```json
+{
+  "author": "Alice",
+  "comments": [
+    {
+      "commenter": "Bob",
+      "text": "Great article! Thanks for sharing."
+    },
+    {
+      "commenter": "Carol",
+      "text": "I found this very informative."
+    },
+    {
+      "commenter": "David",
+      "text": "Looking forward to more articles from you!"
+    }
+  ]
+},
+{
+  "author": "Eve",
+  "comments": [
+    {
+      "commenter": "Frank",
+      "text": "Excellent read!"
+    }
+  ]
+},
+{
+  "author": "Grace",
+  "comments": []
+}
+```
+
 
 **Existential Field Values**
 
@@ -6048,13 +6239,431 @@ The result will be a list of product categories along with their total sales rev
 
 Reducing values in MongoDB allows you to extract meaningful insights from your data, perform calculations, and generate aggregated reports—all within the database, which can be highly efficient for large datasets. The flexibility and power of the aggregation framework make it a valuable tool for data analysis and reporting in MongoDB
 
+### Sharding
+
+**Configuring replication**
+
+Configuring replication in MongoDB is a fundamental aspect of creating a highly available and fault-tolerant database system. Replication involves maintaining multiple copies of your data across multiple servers or nodes, which ensures data redundancy and fault tolerance. While sharding is related to distributing data across multiple servers to improve performance and scalability, it's separate from replication.
+
+Replication in MongoDB is the process of creating and maintaining copies of your data on multiple servers, with one server designated as the primary and others as secondaries. This setup provides the following benefits:
+
+1. `High Availability:` If the primary node fails, one of the secondaries can be automatically promoted as the new primary, minimizing downtime.
+
+2. `Data Redundancy:` Data is replicated across multiple nodes, ensuring that there are copies available in case of data loss or hardware failures.
+
+3. `Load Balancing:` Read operations can be distributed across secondary nodes, improving overall system performance.
+
+4. `Data Locality:` Replication allows you to place copies of data closer to users or in different geographic regions, improving data access speed.
+
+To configure replication in MongoDB, you need to follow these steps:
+
+1. `Start MongoDB Instances:` Ensure you have multiple MongoDB instances running on different servers, each with a unique --port and --dbpath (data directory).
+
+2. `Initialize the Primary Node:` Connect to one of the MongoDB instances (the one you want to be the primary) and run the rs.initiate() command to initiate replication on the primary node.
+
+3. `Add Secondary Nodes:` Add secondary nodes to the replica set using the rs.add() command, specifying the server addresses.
+
+4. `Verify Configuration:` Use the rs.status() command to check the status of your replica set.
+
+5. `Configure Replication Settings:` You can configure additional replication settings such as write concern and read preferences.
+
+6. `Failover Handling:` MongoDB handles failovers automatically if the primary node goes down.
+
+Sharding is a different concept from replication, although both contribute to creating a scalable and highly available MongoDB deployment. Sharding is used when your data grows to the point where a single MongoDB instance can no longer handle it. It involves distributing your data across multiple servers or shards, each responsible for a portion of the data.
+
+Here's how sharding works:
+
+
+1. `Shard Key:` You choose a field (the shard key) to determine how data is distributed across shards. MongoDB uses this key to determine which shard should handle each document.
+
+2. `Shard Servers:` Shards are separate MongoDB instances or clusters. Each shard contains a subset of your data.
+
+3. `Config Servers:` There are also config servers that store metadata about how data is distributed across shards.
+
+4. `Router (mongos):` An application connects to a router (mongos), which routes queries and updates to the appropriate shard(s) based on the shard key.
+
+Sharding is useful for horizontally scaling your MongoDB database to handle large amounts of data and high traffic loads.
+
+In practice, you often use both replication and sharding to create a highly available, scalable, and fault-tolerant MongoDB infrastructure. Replication ensures that each shard has its own replicated copy, enhancing data availability within each shard.
+
+Here's a simplified example of how to enable sharding for a MongoDB collection:
+
+1. Enable sharding for a database:
+
+```bash
+use admin
+db.runCommand({ enableSharding: "mydb" })
+```
+
+2. Choose a shard key and shard the collection:
+
+```bash
+use mydb
+db.createCollection("mycollection")
+db.mycolleciton.createIndex({ shardKeyField: 1 })
+sh.shardCollection("mydb.mycollection", { shardKeyField: 1 })
+```
+
+Remember that sharding requires careful planning and monitoring to ensure an even distribution of data and optimal performance.
+
+**Configuring sharding**
+
+Here are the steps to configure sharding in MongoDB:
+
+Step 1: Set Up a Sharded Cluster
+
+1. Start multiple MongoDB instances (shards) on separate servers or virtual machines. You can specify different ports for each instance.
+
+2. Start at least three config servers, which will store configuration data for the sharded cluster.
+
+Step 2: Enable Sharding on the Database
+
+In your MongoDB shell, connect to one of the shard servers and issue the following command to enable sharding on your database
+
+```bash
+use yourDatabase
+sh.enableSharding("yourDatabase")
+```
+
+Step 3: Choose a Sharding Key
+
+Select a field in your data to be the sharding key. The sharding key determines how data is distributed across the shards. For example, if you have a collection of user data, you might choose the "user_id" field as the sharding key.
+
+```bash
+db.yourCollection.ensureIndex({ "shardingKeyField": 1 })
+```
+
+Step 4: Add Shards to the Cluster
+
+In your MongoDB shell, connect to one of the config servers and issue the following command to add a shard to the cluster:
+
+```bash
+sh.addShard("shard1Server:port")
+```
+
+Step 5: Enable Sharding on the Collection
+
+Enable sharding on the collection using the sharding key:
+
+```bash
+sh.shardCollection("yourDatabase.yourCollection", { "shardingKeyField": 1 })
+```
+
+Step 6: Distribute Data
+
+As you insert data into the collection, MongoDB will automatically distribute the data across the shards based on the sharding key.
+
+Step 7: Query and Manage Data
+
+You can now query and manage your sharded data using the Mongos router. Connect to Mongos from your application, and it will route queries and data requests to the appropriate shard based on the sharding key.
+
+Example:
+
+Suppose you have a collection of user data that you want to shard based on the "user_id" field. Here's how you would configure sharding:
+```bash
+use mydb
+sh.enableSharding("mydb")
+db.users.ensureIndex({ "user_id": 1 })
+sh.addShard("shard1.example.com:27017")
+sh.shardCollection("mydb.users", { "user_id": 1 })
+```
+
+**Accessing clustered data from client APIs**
+
+Before diving into accessing clustered data, let's briefly review the key components of MongoDB sharding:
+
+1. `Shards:` These are individual MongoDB servers that store a subset of the data. Shards distribute data across the cluster.
+
+2. `Shard Key:` A shard key is a field or a combination of fields chosen to determine how data is distributed across shards. It's essential to choose an appropriate shard key for even data distribution.
+
+3. `Router (mongos):` The router is a routing service that directs client requests to the appropriate shard(s). Client applications connect to routers to access data.
+
+4. `Config Servers:` These servers store metadata about the sharded cluster's configuration, such as the mapping between chunks of data and the shards.
+
+
+When accessing data in a sharded MongoDB cluster from a client application, you need to consider the following points:
+
+1. `Using the Router (mongos):` Client applications should connect to the mongos instances, which act as query routers. Mongos directs queries and commands to the appropriate shard(s) based on the shard key.
+
+2. `Shard Key Awareness:` Client applications need to be shard key-aware. This means that queries should include the shard key whenever possible to ensure that queries are routed efficiently to the relevant shards. Queries without the shard key may result in scatter-gather queries across multiple shards, which can be less efficient.
+
+3. `Scalability:` As the amount of data increases, MongoDB's sharding feature allows you to scale horizontally by adding more shards to the cluster. Client applications should be designed to take advantage of this scalability by distributing queries across multiple shards.
+
+Example:
+
+Let's consider a simple example using a sharded MongoDB cluster for storing user data. Assume you have a user collection with a shard key based on the "country" field. Each shard contains user data for a specific country.
+
+```js
+const MongoClient = require('mongodb').MongoClient;
+
+const uri = 'mongodb://mongos1:27017,mongos2:27017,mongos3:27017/mydb';
+
+MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
+  if (err) {
+    console.error('Error connecting to mongos:', err);
+    return;
+  }
+
+  const db = client.db('mydb');
+  const usersCollection = db.collection('users');
+
+  // Access data using the shard key for efficient routing
+  const query = { country: 'USA' };
+  usersCollection.find(query).toArray((err, result) => {
+    if (err) {
+      console.error('Error querying data:', err);
+      return;
+    }
+
+    console.log('Users from USA:', result);
+    client.close();
+  });
+});
+
+```
+
+In this example, the client application connects to a mongos router. It then performs a query based on the shard key ("country") to efficiently route the query to the appropriate shard containing user data for the specified country.
+
+**Latency and consistency in replicated and sharded MongoDB**
+
+Replication in MongoDB involves maintaining multiple copies (replica set) of the same data across different servers or nodes. Each replica set typically consists of a primary node and one or more secondary nodes. Latency can be influenced by several factors in this setup:
+
+1. `Read and Write Operations:` Latency varies for read and write operations. Read operations can be distributed to secondary nodes, which can reduce latency for read-heavy workloads. However, write operations are primarily directed to the primary node.
+
+2. `Network Latency:` Network latency between nodes can affect data replication. If nodes are geographically distributed, network latency may be higher, impacting the time it takes for data to replicate from the primary to secondary nodes.
+
+3. `Oplog Size and Replication Delay:` The Oplog (Operation Log) in MongoDB records write operations. Secondary nodes use the Oplog to catch up with the primary. If the Oplog size is small or if secondary nodes are lagging behind due to resource constraints, replication delays can occur.
+
+4. `Load Balancing:` Proper load balancing of read operations across secondary nodes can help distribute the load and reduce latency.
+
+
+Example:
+Suppose you have a MongoDB replica set with a primary node in one data center and two secondary nodes in different data centers. If a read operation is directed to a secondary node closer to the user, it can result in lower latency compared to querying the primary node located farther away.
+
+MongoDB offers different levels of data consistency in a replica set:
+
+1. `Strong Consistency:` Read operations from secondary nodes return data that has been successfully replicated to a majority of nodes, ensuring strong consistency. However, strong consistency can increase read latency.
+
+2. `Eventual Consistency:` Read operations from secondary nodes may return data that has not yet been replicated to a majority of nodes, providing eventual consistency with potentially lower read latency.
+
+Latency in Sharded MongoDB:
+
+In a sharded MongoDB cluster, data is distributed across multiple shards (individual MongoDB instances). Each shard can have its own replica set for high availability. Latency considerations in sharded setups include:
+
+1. `Shard Key Design:` The choice of shard key can impact query latency. A well-chosen shard key can distribute data evenly across shards, reducing query latency.
+
+2. `Balancing Data:` MongoDB's balancer redistributes chunks of data across shards to ensure even data distribution. This balancing process can affect latency if not managed properly.
+
+3. `Query Routing:` Query routing decisions made by the query router (mongos) can influence query latency. It's crucial to ensure efficient routing.
+
+Example:
+Suppose you have a sharded MongoDB cluster with three shards. Properly distributed data across shards based on a well-designed shard key can result in lower query latency for specific queries as they target the appropriate shard with relevant data.
+
+Consistency in Sharded MongoDB:
+
+In a sharded setup, data consistency is often maintained at the shard level. Each shard may consist of a replica set to ensure high availability and data consistency within that shard.
+
+Example:
+If you perform a read operation against a specific shard, you'll get consistent results based on the data in that shard. However, querying multiple shards simultaneously may introduce eventual consistency, depending on the sharding configuration and replication settings.
 
 
 
 
 
+## Project
 
+### NPM packages
 
+**dotenv**
+
+`Installation:` `npm install dotenv`
+
+`Purpose:` Injects environment variables into application code. Enables us to read configrations from `.env` file. Based on the environment(dev, testing or production) we are in we can load environment specific cofigs like port number, database connection url or db credentials.
+
+`Usage:` import the package using `require("dotenv/config")`. Dont have to initialise a variable to store the module. Just requiring is enough. Place all out environment variables into a `.env` file in the root folder of out project.  
+
+```test
+PORT=8080
+
+JWT_SECRET = nodejstraining
+USER_TOKEN_EXPIRY=3600
+ADMIN_EMAIL=admin@nodejs.com
+
+DATABASE_URL=mongodb://0.0.0.0:27017/todoapp
+```
+
+This is just a text file. No need to wrap strings like db connection url into quotes. Now we read the value within the application code using `process.env.PORT`. process is exposed by node.js. We can access all the environment variables from .env file using this. 
+
+**mongoose**
+
+`Installation: ` `npm install mongoose`
+
+`Purpose: ` Mongoose is a mongodb ODM(Object Document Mapper). Similar to ORM(Object Relational Mapper) in SQL. This is a client to interact with Mongodb. It exposes apis to write queries in programatically and handle in our routes instead from shell.  
+
+`Usage:` Create a model/schema of the collection. For example todo.  
+
+```js
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const todoSchema = new Schema(
+    {
+        task: {
+            type: String,
+            required: true
+        },
+        isComplete: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        user : { type: Schema.Types.ObjectId, ref: 'User' }
+    },
+    {
+        timestamps: true
+    }
+);
+module.exports = mongoose.model('Todo', todoSchema);
+```
+
+Create a model and export it. We can import this model in our route handler functions to perform secific actions. If we want to get all the todoes present in the database we can do so using the below line of code.
+
+```js
+    const todos = await Todo.find({});
+```
+
+**zod**
+
+`Installation:` `npm install zod`;
+`Purpose:` zod is a validator. We cannot trust the data sent by the client. So backend needs to validate whether the data sent is as per requiement or not. If wrong type of data is sent or no data is sent, backend should respond with a `Bad request(400)`.
+
+`Usage:` We can define the shape of the object we are expecting. In the below example we are expecting 2 fields `task` and `isComplete` in the request body. We can specify what error message to display when a partcular validation fails for a field. task is a string, if number is sent in the request body validator will throw `Task must be a string` message. 
+
+```js
+const { z } = require("zod");
+
+  z.object({
+    task: z.string({
+      required_error: "Task is required",
+      invalid_type_error: "Task must be a string",
+    }),
+    isComplete: z.boolean({
+      required_error: "isComplete is required",
+      invalid_type_error: "isComplete must be a boolean",
+    }),
+  }), 
+```
+
+**bcrypt**
+
+`Installation:` `npm install bcrypt`.
+
+`Purpose:` bcrypt helps in hashing. We should not store user passwords into database as plane strings. Its best practise to always hash the password and save. Even developers wont be able to see what the password is. We hash the password before saving to the db. We hash the password sent by the user while loggin in and compare the already hashed password saved in the db to check if the login credentials are right.
+
+`Usage:`
+```js
+  const bcrypt = require("bcrypt");
+  const salt = await bcrypt.genSalt(10); // greater the number greater security
+  const hashedPassword = await bcrypt.hash("password", salt);
+```
+
+Here `password` is the string we are hashing. We generate the salt and use that to hash the string `password`.
+
+**jsonwebtoken**
+
+`Installation:` `npm install jsonwebtoken`.
+
+`Purpose:` Used to generate, verify and decode jwt tokens. Jwt tokens helps us to build secure systems.
+
+`Usage:` 
+
+Creating the token:
+
+```js
+        const token = jwt.sign(
+            {
+                id: existingUser.id,
+                email: existingUser.email,
+                role: existingUser.role,
+            },
+            "Jwt secret",
+            { expiresIn: parseInt(3600) }
+        );
+```
+
+as 1st argument, we pass what we want to embed into the token, 2nd argument is the secret used to generate the token. This secret is requird to decode the token aswell.3rd agrument can be options. For example duration of validity of the token in seconds. 
+
+**cors**
+
+`Installation:` `npm install cors`
+
+`Purpose:`  It is used to enable or restrict cross-origin HTTP requests in web applications. When you make an HTTP request from one domain (origin) to another domain, the browser's same-origin policy typically blocks the request for security reasons. The "cors" middleware helps you control and configure how your server responds to such requests from different origins.
+
+`Usage:` just pass the cors as middleware to express application.
+
+```js
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Your routes and other middleware
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+```
+
+By adding app.use(cors()) to your Express application, you enable CORS for all routes. You can customize CORS behavior by passing options to the cors function, such as specifying allowed origins and HTTP methods.
+
+**helmet**
+`Installation:` `npm install helmet`.
+
+`Purpose:` The "helmet" npm package is a widely used middleware for enhancing the security of web applications built with Node.js and Express.js. It provides a set of HTTP headers to help secure your application by mitigating various common security vulnerabilities. These headers are added to the HTTP responses sent by your application to protect it from threats. 
+
+Here's an overview of some key security features provided by the "helmet" package:
+
+1. Content Security Policy (CSP): Helmet helps prevent Cross-Site Scripting (XSS) attacks by enabling you to set a Content Security Policy. CSP defines the sources from which various types of content can be loaded (scripts, styles, images, etc.), reducing the risk of malicious script execution.
+
+2. Frameguard: Helmet includes the X-Frame-Options header to prevent your website from being embedded within an iframe on another domain, helping to mitigate Clickjacking attacks.
+
+3. HTTP Strict Transport Security (HSTS): Helmet allows you to set the Strict-Transport-Security header, which informs browsers to always use HTTPS when connecting to your website, enhancing the security of data transmission.
+
+4. X-Content-Type-Options: The X-Content-Type-Options header is used to prevent browsers from interpreting files as something else than declared by the server, reducing the risk of MIME type sniffing attacks.
+
+5. X-Download-Options: Helmet sets the X-Download-Options header to prevent Internet Explorer from executing downloads in the context of your site, which can prevent certain security risks.
+
+6. X-DNS-Prefetch-Control: This header controls DNS prefetching, which can be used to prevent browsers from automatically resolving DNS records for links on a page, reducing the risk of data leakage.
+
+7. Referrer Policy: Helmet allows you to set the Referrer-Policy header to control how much information is included in the HTTP Referer header when navigating to external sites, improving privacy.
+
+8. NoSniff: The X-Content-Type-Options header with the value nosniff prevents browsers from trying to guess the MIME type of a resource based on its content, reducing the risk of MIME type confusion attacks.
+
+9. Content Security Policy (CSP) Reporting: Helmet includes options to enable CSP reporting, which allows you to collect violation reports when a policy is violated. These reports can help you identify and fix security issues.
+
+```js
+const express = require('express');
+const helmet = require('helmet');
+
+const app = express();
+
+// Use the helmet middleware
+app.use(helmet());
+
+// Your Express routes and middleware
+// ...
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+```
+
+> Note: Use helmet middleware before rest of the middlewares
 
 
 
